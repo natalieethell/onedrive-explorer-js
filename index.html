@@ -58,7 +58,7 @@
           showThumbnails = false;
           challengeForAuth();
         }
-        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails } );
+        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": true } );
 
         return false;
       }
@@ -101,6 +101,7 @@
       function signOut()
       {
         logoutOfAuth();
+        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": false } );
         $('#od-breadcrumb').empty();
         $('#od-items').empty();
         $('#od-json').empty();
@@ -132,6 +133,7 @@
     {
       oneDriveApiRoot = data.apiRoot;
       showThumbnails = data.thumbs;
+      showCustomLoginButton(!data.signedin)
     }
 
     // we use the url fragment to specify the file path within onedrive
