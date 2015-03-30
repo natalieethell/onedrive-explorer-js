@@ -276,7 +276,7 @@
 
                   var downloadUrl = data['webUrl'];
                   if (downloadUrl) {
-                    tile.click(function(){window.location = downloadUrl;});
+                    tile.click(function(){window.open(downloadUrl, "Download");});
                   }
 
                   if (data.folder) {
