@@ -140,11 +140,12 @@
           // we could also pass it in through the 'Authorization: bearer' header,
           // but that would result in an extra CORS preflight request for every
           // unique path.
-          var odquery = "?expand=thumbnails,children(expand=thumbnails(select=large,c200x150_Crop))&access_token=" + token;
+          var odquery = "?expand=thumbnails,children(expand=thumbnails(select=large,c200x150_Crop))";
 
           $.ajax({
             url: odurl + odquery,
             dataType: 'json',
+            headers: { "Authorization": "Bearer " + token },
             success: function(data) {
               if (data) {
                 // clear out the old content
