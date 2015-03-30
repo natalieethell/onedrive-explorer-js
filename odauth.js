@@ -187,9 +187,9 @@ function challengeForAuth() {
     "&response_type=token" +
     "&redirect_uri=" + encodeURIComponent(appInfo.redirectUri);
 
-    if (!authInfo.scopes)
+    if (!appInfo.scopes)
       url = url + "&scope=" + encodeURIComponent(appInfo.scopes);
-    if (!authInfo.resourceUri)
+    if (!appInfo.resourceUri)
       url = url + "&resource=" + encodeURIComponent(appInfo.resourceUri);
 
   popup(url);
