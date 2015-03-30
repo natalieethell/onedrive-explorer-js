@@ -110,7 +110,9 @@ function setCookie(token, expiresInSeconds) {
 
 function clearCookie()
 {
-  document.cookie = null;
+  var expiration = new Date();
+  var cookie = "odauth=; path=/; expires=" + expiration.toUTCString();
+  document.cookie = cookie;
 }
 
 var storedAppInfo = null;
