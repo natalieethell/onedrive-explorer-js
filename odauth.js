@@ -46,17 +46,20 @@ function odauth(wasClicked) {
 
 // for added security we require https
 function ensureHttps() {
-  if (window.location.protocol != "https:") {
-    window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
-  }
+  // if (window.location.protocol != "https:") {
+  //   window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
+  // }
 }
 
 function onAuthCallback() {
   var authInfo = getAuthInfoFromUrl();
   var token = authInfo["access_token"];
   var expiry = parseInt(authInfo["expires_in"]);
-  setCookie(token, expiry);
-  window.opener.onAuthenticated(token, window);
+  if (token)
+  {
+    setCookie(token, expiry);
+    window.opener.onAuthenticated(token, window);
+  }
 }
 
 function getAuthInfoFromUrl() {
@@ -187,9 +190,9 @@ function challengeForAuth() {
     "&response_type=token" +
     "&redirect_uri=" + encodeURIComponent(appInfo.redirectUri);
 
-    if (!appInfo.scopes)
+    if (appInfo.scopes)
       url = url + "&scope=" + encodeURIComponent(appInfo.scopes);
-    if (!appInfo.resourceUri)
+    if (appInfo.resourceUri)
       url = url + "&resource=" + encodeURIComponent(appInfo.resourceUri);
 
   popup(url);

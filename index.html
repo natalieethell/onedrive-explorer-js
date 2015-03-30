@@ -9,7 +9,7 @@
    redirectUri="https://onedrive.github.io/odx/callback.html"></script>-->
   <script id="odauth" src="odauth.js"
     clientId="50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d"
-    resourceUri="https://prepsp-my.spoppe.com/"
+    resourceUri="https://prepsp-my.spoppe.com"
     redirectUri="https://onedrive-explorer-test.azurewebsites.net/callback.html"
     authServiceUri="https://login.windows-ppe.net/common/oauth2/authorize"></script>
 </head>
@@ -21,6 +21,8 @@
     <div id="od-json" class="od-pagecol"></div>
   </div>
   <script>
+    var oneDriveApiRoot = "https://api.onedrive.com/v1.0";
+
     // we use the url fragment to specify the file path within onedrive
     // (eg. #/pictures/foo.jpg), so we bind to the hashchange event to
     // know when it changes. in cases where we change the hash from
@@ -128,7 +130,7 @@
             afterPath = ":";
           }
 
-          var odurl = "https://api.onedrive.com/v1.0/drive/root" + beforePath + path + afterPath;
+          var odurl = oneDriveApiRoot + "/drive/root" + beforePath + path + afterPath;
 
           // the expand and select parameters mean:
           //  "for the item i'm addressing, include its thumbnails and children,
