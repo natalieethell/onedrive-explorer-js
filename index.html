@@ -67,6 +67,7 @@
         document.getElementById("od-breadcrumb").empty();
         document.getElementById("od-items").empty();
         document.getElementById("od-json").empty();
+        location.reload();
       }
     </script>
 </head>
@@ -212,6 +213,7 @@
             url: odurl + odquery,
             dataType: 'json',
             headers: { "Authorization": "Bearer " + token },
+            accept: "application/json;odata.metadata=none"
             success: function(data) {
               if (data) {
                 // clear out the old content
