@@ -117,19 +117,28 @@ function getAppInfo() {
   }
 
   var scopes = scriptTag.getAttribute("scopes");
-  if (!scopes) {
-    alert("the odauth script tag needs a scopes attribute set to the scopes your app needs");
-  }
+  // if (!scopes) {
+    // alert("the odauth script tag needs a scopes attribute set to the scopes your app needs");
+  // }
 
   var redirectUri = scriptTag.getAttribute("redirectUri");
   if (!redirectUri) {
     alert("the odauth script tag needs a redirectUri attribute set to your redirect landing url");
   }
 
+  var resourceUri = scriptTag.getAttribute("resourceUri");
+
+  var authServiceUri = scriptTag.getAttribute("authServiceUri");
+  if (!authServiceUri) {
+    alert("the odauth script tag needs an authServiceUri attribtue set to the oauth authentication service url");
+  }
+
   var appInfo = {
     "clientId": clientId,
     "scopes": scopes,
-    "redirectUri": redirectUri
+    "redirectUri": redirectUri,
+    "resourceUri": resourceUri,
+    "authServiceUri": authServiceUri
   };
 
   return appInfo;
@@ -173,11 +182,16 @@ function removeLoginButton() {
 function challengeForAuth() {
   var appInfo = getAppInfo();
   var url =
-    "https://login.live.com/oauth20_authorize.srf" +
+    appInfo.authServiceUri +
     "?client_id=" + appInfo.clientId +
-    "&scope=" + encodeURIComponent(appInfo.scopes) +
     "&response_type=token" +
     "&redirect_uri=" + encodeURIComponent(appInfo.redirectUri);
+
+    if (!authInfo.scopes)
+      url = url + "&scope=" + encodeURIComponent(appInfo.scopes);
+    if (!authInfo.resourceUri)
+      url = url + "&resource=" + encodeURIComponent(appInfo.resourceUri);
+
   popup(url);
 }
 
