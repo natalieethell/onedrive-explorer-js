@@ -60,6 +60,14 @@
         }
         return false;
       }
+
+      function signOut()
+      {
+        clearCookie();
+        document.getElementById("od-breadcrumb").empty();
+        document.getElementById("od-items").empty();
+        document.getElementById("od-json").empty();
+      }
     </script>
 </head>
 <body>

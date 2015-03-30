@@ -108,12 +108,16 @@ function setCookie(token, expiresInSeconds) {
   document.cookie = cookie;
 }
 
+function clearCookie()
+{
+  document.cookie = null;
+}
+
 var storedAppInfo = null;
 
 function provideAppInfo(obj)
 {
   storedAppInfo = obj;
-
 }
 
 function getAppInfo() {
@@ -210,6 +214,11 @@ function challengeForAuth() {
       url = url + "&resource=" + encodeURIComponent(appInfo.resourceUri);
 
   popup(url);
+}
+
+function logoutOfAuth() {
+  clearCookie();
+  showLoginButton();
 }
 
 function popup(url) {
