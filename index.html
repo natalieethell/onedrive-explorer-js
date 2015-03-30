@@ -213,7 +213,7 @@
             url: odurl + odquery,
             dataType: 'json',
             headers: { "Authorization": "Bearer " + token },
-            accept: "application/json;odata.metadata=none"
+            accept: "application/json;odata.metadata=none",
             success: function(data) {
               if (data) {
                 // clear out the old content
