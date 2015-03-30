@@ -58,7 +58,44 @@
           showThumbnails = false;
           challengeForAuth();
         }
+        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails } );
+
         return false;
+      }
+
+      function saveToCookie(obj)
+      {
+        var expiration = new Date();
+        expiration.setTime(expiration.getTime() + 3600 * 1000);
+        var data = JSON.stringify(obj);
+        var cookie = "odexplorer=" + data +"; path=/; expires=" + expiration.toUTCString();
+
+        if (document.location.protocol.toLowerCase() == "https") {
+          cookie = cookie + ";secure";
+        }
+        document.cookie = cookie;
+      }
+
+      function loadFromCookie()
+      {
+        var cookies = document.cookie;
+        var name = "odexplorer=";
+        var start = cookies.indexOf(name);
+        if (start >= 0) {
+          start += name.length;
+          var end = cookies.indexOf(';', start);
+          if (end < 0) {
+            end = cookies.length;
+          }
+          else {
+            postCookie = cookies.substring(end);
+          }
+
+          var value = cookies.substring(start, end);
+          return JSON.parse(value);
+        }
+
+        return "";
       }
 
       function signOut()
@@ -89,6 +126,13 @@
   <script>
     var oneDriveApiRoot = "https://api.onedrive.com/v1.0";
     var showThumbnails = true;
+
+    var data = loadFromCookie();
+    if (data)
+    {
+      oneDriveApiRoot = data.apiRoot;
+      showThumbnails = data.thumbs;
+    }
 
     // we use the url fragment to specify the file path within onedrive
     // (eg. #/pictures/foo.jpg), so we bind to the hashchange event to
