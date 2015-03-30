@@ -46,7 +46,7 @@ function odauth(wasClicked) {
 
 // for added security we require https
 function ensureHttps() {
-  if (window.location.protocol != "https:") {
+  if (window.location.protocol != "https:" && window.location.protocol != "file:") {
     window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
   }
 }
@@ -108,7 +108,19 @@ function setCookie(token, expiresInSeconds) {
   document.cookie = cookie;
 }
 
+var storedAppInfo = null;
+
+function provideAppInfo(obj)
+{
+  storedAppInfo = obj;
+
+}
+
 function getAppInfo() {
+
+  if (storedAppInfo)
+    return storedAppInfo;
+
   var scriptTag = document.getElementById("odauth");
   if (!scriptTag) {
     alert("the script tag for odauth.js should have its id set to 'odauth'");
@@ -144,11 +156,13 @@ function getAppInfo() {
     "authServiceUri": authServiceUri
   };
 
+  storedAppInfo = appinfo;
+
   return appInfo;
 }
 
 // called when a login button needs to be displayed for the user to click on.
-// if a customLoginButton() function is defined by your app, it will be called
+// if a showCustomLoginButton() function is defined by your app, it will be called
 // with 'true' passed in to indicate the button should be added. otherwise, it
 // will insert a textual login link at the top of the page. if defined, your
 // showCustomLoginButton should call challengeForAuth() when clicked.

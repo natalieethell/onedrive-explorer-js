@@ -5,15 +5,72 @@
   <link rel="stylesheet" type="text/css" href="style.css"/>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <!--  <script id="odauth" src="odauth.js"
-   clientId="0000000048144E4F" scopes="onedrive.readonly wl.signin"
+   clientId="000000004C14C142" scopes="onedrive.readonly wl.signin"
    redirectUri="https://onedrive.github.io/odx/callback.html"></script>-->
-  <script id="odauth" src="odauth.js"
-    clientId="50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d"
-    resourceUri="https://prepsp-my.spoppe.com"
-    redirectUri="https://onedrive-explorer-test.azurewebsites.net/callback.html"
-    authServiceUri="https://login.windows-ppe.net/common/oauth2/authorize"></script>
+  <script id="odauth" src="odauth.js"></script>
+    <script>
+      function showCustomLoginButton(show)
+      {
+        var loginButton = document.getElementById("od-login");
+        loginButton.style.display = show ? "block" : "none";
+
+        var logoutButton = document.getElementById("od-logoff");
+        logoutButton.style.display = show ? "none" : "block";
+      }
+
+      function getUrlParts(url)
+      {
+        var a = document.createElement("a");
+        a.href = url;
+
+        return { "hostname": a.hostname,
+                 "path": a.pathname }
+      }
+
+      function signInToOneDrive(personal)
+      {
+        if (personal)
+        {
+          var personalAppInfo = {
+            "clientId": "000000004C14C142",
+            "scopes": "onedrive.readonly wl.signin",
+            "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+            "authServiceUri": "https://login.live.com/oauth20_authorize.srf"
+          };
+          provideAppInfo(personalAppInfo);
+          oneDriveApiRoot = "https://api.onedrive.com/v1.0";
+          showThumbnails = true;
+          challengeForAuth();
+        }
+        else
+        {
+          var oneDriveUri = document.getElementById("onedriveUrl").value;
+          var odbLocation = getUrlParts(oneDriveUri);
+
+          var businessAppInfo = {
+            "clientId": "50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d",
+            "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+            "resourceUri": "https://" + odbLocation.hostname,
+            "authServiceUri": "https://login.windows-ppe.net/common/oauth2/authorize"
+          };
+          provideAppInfo(businessAppInfo);
+          oneDriveApiRoot = document.getElementById("onedriveUrl").value;
+          showThumbnails = false;
+          challengeForAuth();
+        }
+        return false;
+      }
+    </script>
 </head>
 <body>
+  <div id="od-login" style="display: hidden">
+    OneDrive URL: <input id="onedriveUrl" type="text" value="https://prepsp-my.spoppe.com/personal/billtest_prepsp_ccsctp_net/_api/v2.0" style="width: 400px" /><br /><br />
+    <a href="#" onclick="signInToOneDrive(true)">Sign in to OneDrive</a>&nbsp;&nbsp;
+    <a href="#" onclick="signInToOneDrive(false)">Sign in to OneDrive for Business</a>
+  </div>
+  <div id="od-logoff" style="display: hidden">
+    <a href="#" onclick="signOut">Sign Out</a>
+  </div>
   <div id="od-loading"></div>
   <div id="od-breadcrumb"></div>
   <div id="od-content">
@@ -21,7 +78,8 @@
     <div id="od-json" class="od-pagecol"></div>
   </div>
   <script>
-    var oneDriveApiRoot = "https://prepsp-my.spoppe.com/personal/billtest_prepsp_ccsctp_net/_api/v2.0";
+    var oneDriveApiRoot = "https://api.onedrive.com/v1.0";
+    var showThumbnails = true;
 
     // we use the url fragment to specify the file path within onedrive
     // (eg. #/pictures/foo.jpg), so we bind to the hashchange event to
@@ -140,7 +198,7 @@
           // we could also pass it in through the 'Authorization: bearer' header,
           // but that would result in an extra CORS preflight request for every
           // unique path.
-          var odquery = "?expand=children";
+          var odquery = showThumbnails ? "?expand=thumbnails,children(expand=thumbnails(select=large,c200x150_Crop))" : "?expand=children";
 
           $.ajax({
             url: odurl + odquery,
