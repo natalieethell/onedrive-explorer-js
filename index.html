@@ -7,30 +7,6 @@
   <script id="odauth" src="odauth.js"></script>
 
   <script>
-    function showCustomLoginButton(show)
-    {
-      var loginButton = document.getElementById("od-login");
-      loginButton.style.display = show ? "block" : "none";
-
-      var logoutButton = document.getElementById("od-logoff");
-      logoutButton.style.display = show ? "none" : "block";
-    }
-
-    function getUrlParts(url)
-    {
-      var a = document.createElement("a");
-      a.href = url;
-
-      return { "hostname": a.hostname,
-               "path": a.pathname }
-    }
-
-    function setOneDriveTitle(title)
-    {
-        var element = document.getElementById("od-site");
-        element.innerText = title;
-    }
-
     function signInToOneDrive(personal)
     {
       if (personal)
@@ -77,6 +53,31 @@
 
       return false;
     }
+
+    function showCustomLoginButton(show)
+    {
+      var loginButton = document.getElementById("od-login");
+      loginButton.style.display = show ? "block" : "none";
+
+      var logoutButton = document.getElementById("od-logoff");
+      logoutButton.style.display = show ? "none" : "block";
+    }
+
+    function getUrlParts(url)
+    {
+      var a = document.createElement("a");
+      a.href = url;
+
+      return { "hostname": a.hostname,
+               "path": a.pathname }
+    }
+
+    function setOneDriveTitle(title)
+    {
+        var element = document.getElementById("od-site");
+        element.innerText = title;
+    }
+
 
     function saveToCookie(obj)
     {
@@ -127,7 +128,7 @@
 <body>
   <div id="od-site" style="background-color: #094AB2; color: white; width: 100%; height: 50px; font-size: 24pt; font-family: 'Segoe UI'; margin-bottom: 10px; padding-left: 10px;">Choose a OneDrive</div>
   <div id="od-login" style="display: hidden">
-    ODB URL: <input id="onedriveUrl" type="text" value="https://msft-my.spoppe.com/personal/rgregg_microsoft_com" style="width: 400px" /><br /><br />
+    ODB URL: <input id="onedriveUrl" type="hidden" value="https://microsoft-my.sharepoint.com/personal/rgregg_microsoft_com" style="width: 400px" /><br /><br />
     <a href="#" onclick="signInToOneDrive(true)">Sign in to OneDrive</a>&nbsp;&nbsp;
     <a href="#" onclick="signInToOneDrive(false)">Sign in to OneDrive for Business</a>
   </div>
