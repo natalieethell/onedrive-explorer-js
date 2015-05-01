@@ -27,6 +27,9 @@
       {
         var oneDriveUri = document.getElementById("onedriveUrl").value;
         var odbLocation = getUrlParts(oneDriveUri);
+        var apiEndPointUrlBase = "https://microsoft-my.sharepoint.com/personal/rgregg_microsoft_com";
+        if (getQueryVariable("ppe") == 1)
+          apiEndPointUrlBase = "https://prepsp-my.spoppe.com/personal/billtest_prepsp_ccsctp_net"
 
         var businessPreproductionAppInfo = {
           "clientId": "50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d",
