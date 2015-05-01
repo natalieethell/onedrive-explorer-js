@@ -29,6 +29,7 @@
         if (getQueryVariable("ppe") == 1)
           apiEndPointUrlBase = "https://prepsp-my.spoppe.com/personal/billtest_prepsp_ccsctp_net"
         oneDriveUri = apiEndPointUrlBase;
+        document.getElementById("onedriveUrl").value = oneDriveUri;
         //var oneDriveUri = document.getElementById("onedriveUrl").value;
         var odbLocation = getUrlParts(oneDriveUri);
 
