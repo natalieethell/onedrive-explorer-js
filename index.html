@@ -274,7 +274,7 @@
           var path = "";
           var beforePath = "";
           var afterPath = "";
-          if (window.location.hash) {
+          if (window.location.hash.length > 1) {
             path = window.location.hash.substr(1);
             beforePath =":";
             afterPath = ":";
