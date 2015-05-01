@@ -4,118 +4,125 @@
   <title>onedrive explorer</title>
   <link rel="stylesheet" type="text/css" href="style.css"/>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-<!--  <script id="odauth" src="odauth.js"
-   clientId="000000004C14C142" scopes="onedrive.readonly wl.signin"
-   redirectUri="https://onedrive.github.io/odx/callback.html"></script>-->
   <script id="odauth" src="odauth.js"></script>
-    <script>
-      function showCustomLoginButton(show)
-      {
-        var loginButton = document.getElementById("od-login");
-        loginButton.style.display = show ? "block" : "none";
 
-        var logoutButton = document.getElementById("od-logoff");
-        logoutButton.style.display = show ? "none" : "block";
+  <script>
+    function showCustomLoginButton(show)
+    {
+      var loginButton = document.getElementById("od-login");
+      loginButton.style.display = show ? "block" : "none";
+
+      var logoutButton = document.getElementById("od-logoff");
+      logoutButton.style.display = show ? "none" : "block";
+    }
+
+    function getUrlParts(url)
+    {
+      var a = document.createElement("a");
+      a.href = url;
+
+      return { "hostname": a.hostname,
+               "path": a.pathname }
+    }
+
+    function setOneDriveTitle(title)
+    {
+        var element = document.getElementById("od-site");
+        element.innerText = title;
+    }
+
+    function signInToOneDrive(personal)
+    {
+      if (personal)
+      {
+        var personalAppInfo = {
+          "clientId": "000000004C14C142",
+          "scopes": "onedrive.readonly wl.signin",
+          "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+          "authServiceUri": "https://login.live.com/oauth20_authorize.srf"
+        };
+        provideAppInfo(personalAppInfo);
+        oneDriveApiRoot = "https://api.onedrive.com/v1.0";
+        showThumbnails = true;
+        setOneDriveTitle("OneDrive - Personal");
+        challengeForAuth();
       }
-
-      function getUrlParts(url)
+      else
       {
-        var a = document.createElement("a");
-        a.href = url;
+        var oneDriveUri = document.getElementById("onedriveUrl").value;
+        var odbLocation = getUrlParts(oneDriveUri);
 
-        return { "hostname": a.hostname,
-                 "path": a.pathname }
+        var businessPreproductionAppInfo = {
+          "clientId": "50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d",
+          "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+          "resourceUri": "https://" + odbLocation.hostname,
+          "authServiceUri": "https://login.windows-ppe.net/common/oauth2/authorize"
+        };
+
+        var businessProductionAppInfo = {
+
+          "clientId": "d3fe7b01-77c1-4fcc-beb5-c1a9b63f13b1",
+          "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+          "resourceUri": "https://" + odbLocation.hostname,
+          "authServiceUri": "https://login.windows.net/common/oauth2/authorize"
+        };
+
+        provideAppInfo(businessProductionAppInfo);
+        oneDriveApiRoot = document.getElementById("onedriveUrl").value + "/_api/v2.0";
+        showThumbnails = false;
+        setOneDriveTitle("OneDrive for Business");
+        challengeForAuth();
       }
+      saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": true } );
 
-      function setOneDriveTitle(title)
-      {
-          var element = document.getElementById("od-site");
-          element.innerText = title;
+      return false;
+    }
+
+    function saveToCookie(obj)
+    {
+      var expiration = new Date();
+      expiration.setTime(expiration.getTime() + 3600 * 1000);
+      var data = JSON.stringify(obj);
+      var cookie = "odexplorer=" + data +"; path=/; expires=" + expiration.toUTCString();
+
+      if (document.location.protocol.toLowerCase() == "https") {
+        cookie = cookie + ";secure";
       }
-      
-      function signInToOneDrive(personal)
-      {
-        if (personal)
-        {
-          var personalAppInfo = {
-            "clientId": "000000004C14C142",
-            "scopes": "onedrive.readonly wl.signin",
-            "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
-            "authServiceUri": "https://login.live.com/oauth20_authorize.srf"
-          };
-          provideAppInfo(personalAppInfo);
-          oneDriveApiRoot = "https://api.onedrive.com/v1.0";
-          showThumbnails = true;
-          setOneDriveTitle("OneDrive - Personal");
-          challengeForAuth();
+      document.cookie = cookie;
+    }
+
+    function loadFromCookie()
+    {
+      var cookies = document.cookie;
+      var name = "odexplorer=";
+      var start = cookies.indexOf(name);
+      if (start >= 0) {
+        start += name.length;
+        var end = cookies.indexOf(';', start);
+        if (end < 0) {
+          end = cookies.length;
         }
-        else
-        {
-          var oneDriveUri = document.getElementById("onedriveUrl").value;
-          var odbLocation = getUrlParts(oneDriveUri);
-
-          var businessAppInfo = {
-            "clientId": "50b5a58e-71e3-49c3-b5ad-67cf0cd4f19d",
-            "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
-            "resourceUri": "https://" + odbLocation.hostname,
-            "authServiceUri": "https://login.windows-ppe.net/common/oauth2/authorize"
-          };
-          provideAppInfo(businessAppInfo);
-          oneDriveApiRoot = document.getElementById("onedriveUrl").value + "/_api/v2.0";
-          showThumbnails = false;
-          setOneDriveTitle("OneDrive for Business");
-          challengeForAuth();
-        }
-        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": true } );
-
-        return false;
-      }
-
-      function saveToCookie(obj)
-      {
-        var expiration = new Date();
-        expiration.setTime(expiration.getTime() + 3600 * 1000);
-        var data = JSON.stringify(obj);
-        var cookie = "odexplorer=" + data +"; path=/; expires=" + expiration.toUTCString();
-
-        if (document.location.protocol.toLowerCase() == "https") {
-          cookie = cookie + ";secure";
-        }
-        document.cookie = cookie;
-      }
-
-      function loadFromCookie()
-      {
-        var cookies = document.cookie;
-        var name = "odexplorer=";
-        var start = cookies.indexOf(name);
-        if (start >= 0) {
-          start += name.length;
-          var end = cookies.indexOf(';', start);
-          if (end < 0) {
-            end = cookies.length;
-          }
-          else {
-            postCookie = cookies.substring(end);
-          }
-
-          var value = cookies.substring(start, end);
-          return JSON.parse(value);
+        else {
+          postCookie = cookies.substring(end);
         }
 
-        return "";
+        var value = cookies.substring(start, end);
+        return JSON.parse(value);
       }
 
-      function signOut()
-      {
-        logoutOfAuth();
-        saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": false } );
-        $('#od-breadcrumb').empty();
-        $('#od-items').empty();
-        $('#od-json').empty();
-        location.reload();
-      }
-    </script>
+      return "";
+    }
+
+    function signOut()
+    {
+      logoutOfAuth();
+      saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": false } );
+      $('#od-breadcrumb').empty();
+      $('#od-items').empty();
+      $('#od-json').empty();
+      location.reload();
+    }
+  </script>
 </head>
 <body>
   <div id="od-site" style="background-color: #094AB2; color: white; width: 100%; height: 50px; font-size: 24pt; font-family: 'Segoe UI'; margin-bottom: 10px; padding-left: 10px;">Choose a OneDrive</div>
