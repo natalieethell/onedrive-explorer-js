@@ -37,7 +37,7 @@
 
       oneDriveApiRoot = "https://graph.microsoft.com/beta/me";
       showThumbnails = true;
-      setOneDriveTitle("OneDrive - Microsoft Graph");
+      // setOneDriveTitle("OneDrive");
       challengeForAuth();
 
       saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": true } );
@@ -127,7 +127,7 @@
   </script>
 </head>
 <body>
-  <div id="od-site" style="background-color: #094AB2; color: white; width: 100%; height: 50px; font-size: 24pt; font-family: 'Segoe UI'; margin-bottom: 10px; padding-left: 10px;">Choose a OneDrive</div>
+  <div id="od-site" style="background-color: #094AB2; color: white; width: 100%; height: 50px; font-size: 24pt; font-family: 'Segoe UI'; margin-bottom: 10px; padding-left: 10px;">OneDrive Explorer - JavaScript</div>
   <div id="od-login" style="display: hidden">
     <a href="#" onclick="signInToOneDrive()">Sign in to OneDrive</a>&nbsp;&nbsp;
   </div>
