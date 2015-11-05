@@ -9,14 +9,31 @@
   <script>
     function signInToOneDrive()
     {
-      var graphAppInfo = {
-        "clientId": "f6a61494-e045-45b1-acc0-903090ed248c",
-        "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
-        "scopes": "files.read",
-        "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
-      };
+      var appInfo = null;
 
-      provideAppInfo(graphAppInfo);
+      if (getQueryVariable("usev2auth") == 1)
+      {
+        // Use v2.0 auth end point and scopes
+        appInfo = {
+          "clientId": "f6a61494-e045-45b1-acc0-903090ed248c",
+          "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+          "scopes": "files.read",
+          "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+        };
+      }
+      else
+      {
+        // Use the v1.0 auth end point and explicitly defined permissions (no scope)
+        appInfo = {
+          "clientId": "d3fe7b01-77c1-4fcc-beb5-c1a9b63f13b1",
+          "redirectUri": "https://onedrive-explorer-test.azurewebsites.net/callback.html",
+          "resourceUri": "https://graph.microsoft.com",
+          "authServiceUri": "https://login.microsoftonline.com/common/oauth2/authorize"
+        };
+      }
+
+
+      provideAppInfo(appInfo);
 
       oneDriveApiRoot = "https://graph.microsoft.com/beta/me";
       showThumbnails = true;
