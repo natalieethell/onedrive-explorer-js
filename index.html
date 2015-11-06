@@ -264,12 +264,8 @@
           // the expand and select parameters mean:
           //  "for the item i'm addressing, include its thumbnails and children,
           //   and for each of the children, include its thumbnails. for those
-          //   thumbnails, return the 'large' and 'c200x150_Crop' sizes"
-          // we also attach the access token as a query parameter to every request.
-          // we could also pass it in through the 'Authorization: bearer' header,
-          // but that would result in an extra CORS preflight request for every
-          // unique path.
-          var odquery = showThumbnails ? "?expand=thumbnails,children(expand=thumbnails(select=large,c200x150_Crop))" : "?expand=children";
+          //   thumbnails, return the 'large' size"
+          var odquery = showThumbnails ? "?$expand=thumbnails,children($expand=thumbnails($select=large))" : "?$expand=children";
 
           $.ajax({
             url: odurl + odquery,
@@ -319,7 +315,7 @@
 
                     if (item.thumbnails && item.thumbnails.length > 0) {
                       $("<img>").
-                        attr("src", item.thumbnails[0].c200x150_Crop.url).
+                        attr("src", item.thumbnails[0].large.url).
                         appendTo(tile);
                     }
 
