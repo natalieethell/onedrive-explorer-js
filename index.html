@@ -10,10 +10,12 @@
   <script>
     function signInToOneDrive()
     {
+      // Register your own application at https://apps.dev.microsoft.com
+      // and set the "clientId" and "redirectUri" variables accordingly.
       var appInfo = {
         "clientId": "e9a57c07-69e4-41f5-b868-0f123d2fda17",
         "redirectUri": "http://localhost:9999/callback.html",
-        "scopes": "user.read files.readwrite",
+        "scopes": "user.read files.read",
         "authServiceUri": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
       };
       provideAppInfo(appInfo);
