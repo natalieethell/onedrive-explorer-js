@@ -46,7 +46,7 @@ function odauth(wasClicked) {
 
 // for added security we require https
 function ensureHttps() {
-  if (window.location.protocol != "https:" && window.location.protocol != "file:") {
+  if (window.location.protocol != "https:" && window.location.protocol != "file:" && window.location.hostname != "localhost") {
     window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
   }
 }

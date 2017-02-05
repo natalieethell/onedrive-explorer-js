@@ -3,7 +3,7 @@
 
 OneDrive Explorer web app
 
-This sample illustrates the basic concepts for interacting with the OneDrive API to create a file explorer web app.
+This sample illustrates the basic concepts for interacting with OneDrive via Microsoft Graph API to create a file explorer web app.
 
 Included in this project:
 
