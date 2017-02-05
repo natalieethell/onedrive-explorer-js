@@ -18,11 +18,11 @@
       };
       provideAppInfo(appInfo);
 
+      // use Microsoft Graph v1.0
       oneDriveApiRoot = "https://graph.microsoft.com/v1.0/me";
-      showThumbnails = true;
       challengeForAuth();
 
-      saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": true } );
+      saveToCookie( { "apiRoot": oneDriveApiRoot, "signedin": true } );
       return false;
     }
 
@@ -89,7 +89,7 @@
     function signOut()
     {
       logoutOfAuth();
-      saveToCookie( { "apiRoot": oneDriveApiRoot, "thumbs": showThumbnails, "signedin": false } );
+      saveToCookie( { "apiRoot": oneDriveApiRoot, "signedin": false } );
       $('#od-breadcrumb').empty();
       $('#od-items').empty();
       $('#od-json').empty();
@@ -128,14 +128,12 @@
     <div id="od-json" class="od-pagecol"></div>
   </div>
   <script>
-    var oneDriveApiRoot = "https://graph.microsoft.com/beta/me";
-    var showThumbnails = true;
+    var oneDriveApiRoot = "https://graph.microsoft.com/v1.0/me";
 
     var data = loadFromCookie();
     if (data)
     {
       oneDriveApiRoot = data.apiRoot;
-      showThumbnails = data.thumbs;
       showCustomLoginButton(!data.signedin)
     }
 
@@ -253,7 +251,7 @@
           //   and for each of the children, include its thumbnails. for those
           //   thumbnails, return the 'large' size"
           var thumbnailSize = "large"
-          var odquery = showThumbnails ? "?expand=thumbnails,children(expand=thumbnails(select=" + thumbnailSize + "))" : "?expand=children";
+          var odquery = "?expand=thumbnails,children(expand=thumbnails(select=" + thumbnailSize + "))";
 
           $.ajax({
             url: odurl + odquery,
