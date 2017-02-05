@@ -19,10 +19,10 @@
       provideAppInfo(appInfo);
 
       // use Microsoft Graph v1.0
-      oneDriveApiRoot = "https://graph.microsoft.com/v1.0/me";
+      msGraphApiRoot = "https://graph.microsoft.com/v1.0/me";
       challengeForAuth();
 
-      saveToCookie( { "apiRoot": oneDriveApiRoot, "signedin": true } );
+      saveToCookie( { "apiRoot": msGraphApiRoot, "signedin": true } );
       return false;
     }
 
@@ -89,7 +89,7 @@
     function signOut()
     {
       logoutOfAuth();
-      saveToCookie( { "apiRoot": oneDriveApiRoot, "signedin": false } );
+      saveToCookie( { "apiRoot": msGraphApiRoot, "signedin": false } );
       $('#od-breadcrumb').empty();
       $('#od-items').empty();
       $('#od-json').empty();
@@ -128,12 +128,12 @@
     <div id="od-json" class="od-pagecol"></div>
   </div>
   <script>
-    var oneDriveApiRoot = "https://graph.microsoft.com/v1.0/me";
+    var msGraphApiRoot = "https://graph.microsoft.com/v1.0/me";
 
     var data = loadFromCookie();
     if (data)
     {
-      oneDriveApiRoot = data.apiRoot;
+      msGraphApiRoot = data.apiRoot;
       showCustomLoginButton(!data.signedin)
     }
 
@@ -244,7 +244,7 @@
             afterPath = ":";
           }
 
-          var odurl = oneDriveApiRoot + "/drive/root" + beforePath + path + afterPath;
+          var odurl = msGraphApiRoot + "/drive/root" + beforePath + path + afterPath;
 
           // the expand and select parameters mean:
           //  "for the item i'm addressing, include its thumbnails and children,
