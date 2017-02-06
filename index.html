@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>OneDrive Browser Sample</title>
+  <title>OneDrive Explorer Sample</title>
   <link rel="stylesheet" type="text/css" href="style.css"/>
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
   <script id="odauth" src="odauth.js"></script>
@@ -276,7 +276,7 @@
                 // '/children' directly instead of '/parent?expand=children', then
                 // they'll be in an array called 'data'
                 var decodedPath = decodeURIComponent(path);
-                document.title = "OneDrive Browser" + ((decodedPath.length > 0) ? " - " + decodedPath : "");
+                document.title = "OneDrive Explorer" + ((decodedPath.length > 0) ? " - " + decodedPath : "");
                   
                 updateBreadcrumb(decodedPath);
                 var children = data.children || data.value;
