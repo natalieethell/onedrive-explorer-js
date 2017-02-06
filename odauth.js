@@ -138,9 +138,7 @@ function getAppInfo() {
   }
 
   var scopes = scriptTag.getAttribute("scopes");
-  // if (!scopes) {
-    // alert("the odauth script tag needs a scopes attribute set to the scopes your app needs");
-  // }
+  // scopes aren't always required, so we don't warn here.
 
   var redirectUri = scriptTag.getAttribute("redirectUri");
   if (!redirectUri) {
