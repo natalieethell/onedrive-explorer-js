@@ -1,16 +1,17 @@
 (function () {
-    var scopes = ["user.read", "files.read.all", "sites.read.all"];
-    // Initialize Msal library
-    window.config = {
-        clientID: "e9a57c07-69e4-41f5-b868-0f123d2fda17",
+    var config = {
+        clientId: "e9a57c07-69e4-41f5-b868-0f123d2fda17",
         redirectUri: window.location.origin,
-        interactionMode: "popUp"
-    }
-    if (!clientApplication)
-    {
-        clientApplication = createApplication(window.config);
+        interactionMode: "popUp",
+        scopes: ["user.read", "files.read.all", "sites.read.all"],
+        authority: "https://login.microsoftonline.com/common"
     }
 
+    var clientApplication = createMsalApplication(config);
+    var baseUrl = getQueryVariable("baseUrl")
+    window.msGraphApiRoot = (baseUrl) ? baseUrl : "https://graph.microsoft.com/v1.0/me";
+
+    // Wire up to the commands in the html
     var $signInButton = $("#od-login");
     var $signOutButton = $("#od-logoff");
     var $title = $("#od-title");
@@ -25,18 +26,20 @@
     }
 
     window.onload = function () {
-        onSignin(null);
+        updateSignedInUserState(null);
     }
 
     $signOutButton.click(function () {
         clientApplication.clearCache();
         clientApplication.user = null;
-        onSignin(null);
-//        clientApplication.loginPopup(scopes).then(onSignin, onSigninFailed);
+        updateSignedInUserState();
     });
 
     $signInButton.click(function () {
-        clientApplication.loginPopup(scopes).then(onSignin);
+        clientApplication.loginPopup(config.scopes).then(function (idToken) {
+            // Update the UI status now that we're signed in.
+            updateSignedInUserState(true);
+        });
     });
     
     // we bind to jquery's ajax start/stop events so that we can style the
@@ -46,15 +49,20 @@
         ajaxStop:  function() {$('body').removeClass('loading');}
     });    
 
-    // Populate the MS Graph API URL
-    var baseUrl = getQueryVariable("baseUrl")
-    window.msGraphApiRoot = (baseUrl) ? baseUrl : "https://graph.microsoft.com/v1.0/me";
+    function createMsalApplication(config, authCallback) {
+        var msalApp = new Msal.UserAgentApplication(config.clientId, null /*config.authority*/, authCallback);
+        msalApp.redirectUri = config.redirectUri;
+        msalApp.interactionMode = config.interactionMode;
 
-    function onSigninFailed(error) {
-        alert(error);
+        var isCallback = msalApp.isCallback(window.location.hash);
+        if (isCallback)
+        {
+            msalApp.handleAuthenticationResponse(window.location.hash);
+        }
+        return msalApp;
     }
 
-    function onSignin(idToken) {
+    function updateSignedInUserState(reloadView) {
         // Check login status, update the UI
         var user = clientApplication.getUser();
         if (user) {
@@ -62,7 +70,9 @@
             $signInButton.hide();
             $signOutButton.show();
             saveToCookie( { "apiRoot": window.msGraphApiRoot, "signedin": true } );
-            $(window).trigger("hashchange");
+            if (reloadView) {
+                $(window).trigger("hashchange");
+            }
         } else {
             // signed out
             $signInButton.show();
@@ -86,7 +96,6 @@
     function stripHash(view) {
         return view.substr(view.indexOf('#') + 1);
     }
-
 
     function saveToCookie(obj) {
         var expiration = new Date();
