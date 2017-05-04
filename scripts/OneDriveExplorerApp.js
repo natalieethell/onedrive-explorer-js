@@ -30,9 +30,13 @@
     }
 
     $signOutButton.click(function () {
-        clientApplication.clearCache();
-        clientApplication.user = null;
-        updateSignedInUserState();
+        // clientApplication.clearCache();
+        // clientApplication.user = null;
+        // updateSignedInUserState();
+        clientApplication.loginPopup(config.scopes).then(function (idToken) {
+            // Update the UI status now that we're signed in.
+            updateSignedInUserState(true);
+        });
     });
 
     $signInButton.click(function () {
@@ -49,16 +53,10 @@
         ajaxStop:  function() {$('body').removeClass('loading');}
     });    
 
-    function createMsalApplication(config, authCallback) {
-        var msalApp = new Msal.UserAgentApplication(config.clientId, null /*config.authority*/, authCallback);
+    function createMsalApplication(config) {
+        var msalApp = new Msal.UserAgentApplication(config.clientId);
         msalApp.redirectUri = config.redirectUri;
         msalApp.interactionMode = config.interactionMode;
-
-        var isCallback = msalApp.isCallback(window.location.hash);
-        if (isCallback)
-        {
-            msalApp.handleAuthenticationResponse(window.location.hash);
-        }
         return msalApp;
     }
 
@@ -172,13 +170,11 @@
         var thumbnailSize = "large"
         var odquery = "?expand=thumbnails,children(expand=thumbnails(select=" + thumbnailSize + "))";
 
-        getAccessToken(scopes, function(token, error) {
-            if (token) {
-                loadDriveItemChildren(odurl, odquery, token, path, thumbnailSize);
-            } else {
-                alert(error);
-            }
-        })
+        clientApplication.acquireTokenSilent(config.scopes).then(function(accessToken) {
+            loadDriveItemChildren(odurl, odqueyr, accessToken, path, thumbnailSize);
+        }, function (error) {
+            window.alert(error);
+        });
     }
     
     function loadDriveItemChildren(odurl, odquery, token, path, thumbnailSize) {
