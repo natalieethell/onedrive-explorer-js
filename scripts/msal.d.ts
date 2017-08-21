@@ -105,6 +105,7 @@ declare namespace Msal {
 declare namespace Msal {
     class Constants {
         static readonly errorDescription: string;
+        static readonly error: string;
         static readonly scope: string;
         static readonly acquireTokenUser: string;
         static readonly clientInfo: string;
@@ -123,7 +124,6 @@ declare namespace Msal {
         static readonly nonceIdToken: string;
         static readonly userName: string;
         static readonly idTokenKey: string;
-        static readonly error: string;
         static readonly loginRequest: string;
         static readonly loginError: string;
         static readonly renewStatus: string;
@@ -140,6 +140,22 @@ declare namespace Msal {
         static readonly login: string;
         static readonly renewToken: string;
         static readonly unknown: string;
+    }
+    class ErrorCodes {
+        static readonly loginProgressError: string;
+        static readonly acquireTokenProgressError: string;
+        static readonly inputScopesError: string;
+        static readonly endpointResolutionError: string;
+        static readonly popUpWindowError: string;
+        static readonly userLoginError: string;
+    }
+    class ErrorDescription {
+        static readonly loginProgressError: string;
+        static readonly acquireTokenProgressError: string;
+        static readonly inputScopesError: string;
+        static readonly endpointResolutionError: string;
+        static readonly popUpWindowError: string;
+        static readonly userLoginError: string;
     }
 }
 declare namespace Msal {
@@ -278,13 +294,13 @@ declare namespace Msal {
     }
 }
 declare namespace Msal {
+    type tokenReceivedCallback = (errorDesc: string, token: string, error: string, tokenType: string) => void;
     class UserAgentApplication {
         private _cacheLocations;
         private _cacheLocation;
-        cacheLocation: string;
+        readonly cacheLocation: string;
         private _interactionModes;
         private _interactionMode;
-        interactionMode: string;
         private _requestContext;
         private _loginInProgress;
         private _acquireTokenInProgress;
@@ -298,10 +314,16 @@ declare namespace Msal {
         private authorityInstance;
         authority: string;
         validateAuthority: boolean;
-        redirectUri: string;
-        postLogoutredirectUri: string;
-        navigateToLoginRequestUrl: boolean;
-        constructor(clientId: string, authority: string, tokenReceivedCallback: (errorDesc: string, token: string, error: string, tokenType: string) => void, validateAuthority?: boolean);
+        private _redirectUri;
+        private _postLogoutredirectUri;
+        private _navigateToLoginRequestUrl;
+        constructor(clientId: string, authority: string, tokenReceivedCallback: tokenReceivedCallback, {validateAuthority, cacheLocation, redirectUri, postLogoutRedirectUri, navigateToLoginRequestUrl}?: {
+            validateAuthority?: boolean;
+            cacheLocation?: string;
+            redirectUri?: string;
+            postLogoutRedirectUri?: string;
+            navigateToLoginRequestUrl?: boolean;
+        });
         loginRedirect(scopes?: Array<string>, extraQueryParameters?: string): void;
         loginPopup(scopes: Array<string>, extraQueryParameters?: string): Promise<string>;
         private promptUser(urlNavigate);
@@ -310,6 +332,7 @@ declare namespace Msal {
         private clearCache();
         private openPopup(urlNavigate, title, popUpWidth, popUpHeight);
         private validateInputScope(scopes);
+        private filterScopes(scopes);
         private registerCallback(expectedState, scope, resolve, reject);
         private getCachedToken(authenticationRequest, user);
         getAllUsers(): Array<User>;
@@ -339,6 +362,7 @@ declare namespace Msal {
         private getHash(hash);
         private getRequestInfo(hash);
         private getScopeFromState(state);
+        private isInIframe();
     }
 }
 declare namespace Msal {

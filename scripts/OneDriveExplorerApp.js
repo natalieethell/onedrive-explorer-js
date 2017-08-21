@@ -171,7 +171,7 @@
         var odquery = "?expand=thumbnails,children(expand=thumbnails(select=" + thumbnailSize + "))";
 
         clientApplication.acquireTokenSilent(config.scopes).then(function(accessToken) {
-            loadDriveItemChildren(odurl, odqueyr, accessToken, path, thumbnailSize);
+            loadDriveItemChildren(odurl, odquery, accessToken, path, thumbnailSize);
         }, function (error) {
             window.alert(error);
         });
